@@ -19,14 +19,9 @@ if __name__ == '__main__':
 
     cursor = conn.cursor()
 
-    schema_list = cursor.execute("SELECT schema_name FROM information_schema.schemata")
-
-    #cursor.execute(create_schemas)
-    #return_value = cursor.fetchone()
-    #print(return_value)
-
-    #cursor.execute(import_data)
-    #return_value = cursor.fetchone()
-    #print(return_value)
+    cursor.execute("SELECT * FROM pg_catalog.pg_tables;")
+    schema_list = cursor.fetchall()
+    for i in schema_list:
+        print(i)
 
     cursor.close()
