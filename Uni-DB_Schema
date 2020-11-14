@@ -1,0 +1,43 @@
+CREATE SCHEMA uni_some;
+
+CREATE TABLE uni_some.studenten
+       (matr_nr       INTEGER PRIMARY KEY,
+        name           VARCHAR(30) NOT NULL,
+        semester       INTEGER);
+
+
+CREATE TABLE uni_some.professoren
+       (pers_nr        INTEGER PRIMARY KEY,
+        name           VARCHAR(30) NOT NULL,
+        rang           CHAR(2) CHECK (Rang in ('C2', 'C3', 'C4')),
+        raum           INTEGER UNIQUE);
+
+CREATE TABLE uni_some.assistenten
+       (pers_nr        INTEGER PRIMARY KEY,
+        name           VARCHAR(30) NOT NULL,
+        fachgebiet     VARCHAR(30),
+        boss           INTEGER,
+        FOREIGN KEY    (Boss) REFERENCES professoren);
+
+CREATE TABLE uni_some.vorlesungen
+       (vorl_nr        INTEGER PRIMARY KEY,
+        titel          VARCHAR(30),
+        sws            INTEGER,
+        gelesen_von    INTEGER REFERENCES professoren);
+
+CREATE TABLE uni_some.hoeren
+       (matr_nr        INTEGER REFERENCES studenten ON DELETE CASCADE,
+        vorl_nr        INTEGER REFERENCES vorlesungen ON DELETE CASCADE,
+        PRIMARY KEY    (matr_nr, vorl_nr));
+
+CREATE TABLE uni_some.voraussetzen
+       (vorgaenger     INTEGER REFERENCES vorlesungen ON DELETE CASCADE,
+        nachfolger     INTEGER REFERENCES vorlesungen ON DELETE CASCADE,
+        PRIMARY KEY    (vorgaenger, nachfolger));
+
+CREATE TABLE uni_some.pruefen
+       (matr_nr         INTEGER REFERENCES studenten ON DELETE CASCADE,
+        vorl_nr         INTEGER REFERENCES vorlesungen,
+        pers_nr         INTEGER REFERENCES professoren,
+        note            NUMERIC(2,1) CHECK (note between 0.7 and 5.0),
+        PRIMARY KEY     (matr_nr, vorl_nr));
